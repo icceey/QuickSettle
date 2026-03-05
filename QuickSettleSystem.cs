@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using Microsoft.Xna.Framework;
+using MonoMod.RuntimeDetour;
 using Terraria;
 using Terraria.Chat;
 using Terraria.Localization;
@@ -20,15 +21,21 @@ public class QuickSettleSystem : ModSystem
         ChatMessage message,
         int clientId);
 
-    private static readonly ProcessMessageDelegate ProcessMessageHook = OnProcessIncomingMessage;
+    private Hook? _processMessageHook;
 
     public override void Load()
     {
         var method = typeof(ChatCommandProcessor).GetMethod(
             "ProcessIncomingMessage",
-            BindingFlags.Public | BindingFlags.Instance);
+            BindingFlags.Public | BindingFlags.Instance)!;
 
-        MonoModHooks.Add(method!, ProcessMessageHook);
+        _processMessageHook = new Hook(method, (ProcessMessageDelegate)OnProcessIncomingMessage);
+    }
+
+    public override void Unload()
+    {
+        _processMessageHook?.Dispose();
+        _processMessageHook = null;
     }
 
     private static void OnProcessIncomingMessage(
