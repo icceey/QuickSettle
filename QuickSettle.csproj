@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>QuickSettle</AssemblyName>
+    <!-- Explicit TargetFramework so compile-only builds (-p:BuildMod=false) work correctly.
+         tMLMod.targets only sets TargetFramework when BuildMod=true. -->
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <!-- tModLoader installation path.
+         Set the TMLInstallDir environment variable to override.
+         Default: standard Steam location on Linux. -->
+    <TMLInstallDir Condition="'$(TMLInstallDir)' == ''">$(HOME)/.local/share/Steam/steamapps/common/tModLoader</TMLInstallDir>
+  </PropertyGroup>
+
+  <Import Project="$(TMLInstallDir)/tMLMod.targets" />
+</Project>
