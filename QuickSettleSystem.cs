@@ -48,7 +48,7 @@ public class QuickSettleSystem : ModSystem
         {
             Liquid.QuickWater(2, -1, -1);
             ChatHelper.BroadcastChatMessage(
-                NetworkText.FromLiteral("All liquids have been settled."),
+                NetworkText.FromKey("Mods.QuickSettle.LiquidsSettled"),
                 Color.Cyan);
             return;
         }
