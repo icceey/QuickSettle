@@ -1,0 +1,5 @@
+Mods: {
+	QuickSettle: {
+		LiquidsSettled: All liquids have been settled.
+	}
+}
