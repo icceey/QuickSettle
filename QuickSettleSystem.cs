@@ -46,10 +46,19 @@ public class QuickSettleSystem : ModSystem
     {
         if (message.Text == "1")
         {
-            Liquid.QuickWater(2, -1, -1);
-            ChatHelper.BroadcastChatMessage(
-                NetworkText.FromKey("Mods.QuickSettle.LiquidsSettled"),
-                Color.Cyan);
+            if (Liquid.panicMode)
+            {
+                ChatHelper.BroadcastChatMessage(
+                    NetworkText.FromKey("Mods.QuickSettle.LiquidsPanicking"),
+                    Color.Yellow);
+            }
+            else
+            {
+                Liquid.StartPanic();
+                ChatHelper.BroadcastChatMessage(
+                    NetworkText.FromKey("Mods.QuickSettle.LiquidsSettling"),
+                    Color.Cyan);
+            }
             return;
         }
 

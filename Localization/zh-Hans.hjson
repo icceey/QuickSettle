@@ -1,5 +1,6 @@
 Mods: {
 	QuickSettle: {
-		LiquidsSettled: 所有液体已经稳定。
+		LiquidsSettling: 液体正在稳定中...
+		LiquidsPanicking: 液体已处于稳定处理中。
 	}
 }

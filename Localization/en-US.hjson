@@ -1,5 +1,6 @@
 Mods: {
 	QuickSettle: {
-		LiquidsSettled: All liquids have been settled.
+		LiquidsSettling: Liquids are now settling...
+		LiquidsPanicking: Liquids are already settling.
 	}
 }
