@@ -46,19 +46,18 @@ public class QuickSettleSystem : ModSystem
     {
         if (message.Text == "1")
         {
-            if (Liquid.panicMode)
+            int maxLoop = 100000;
+            int currentLoop = 0;
+            
+            while (Liquid.numLiquid > 0 && currentLoop < maxLoop)
             {
-                ChatHelper.BroadcastChatMessage(
-                    NetworkText.FromKey("Mods.QuickSettle.LiquidsPanicking"),
-                    Color.Yellow);
+                Liquid.UpdateLiquid();
+                currentLoop++;
             }
-            else
-            {
-                Liquid.StartPanic();
-                ChatHelper.BroadcastChatMessage(
-                    NetworkText.FromKey("Mods.QuickSettle.LiquidsSettling"),
-                    Color.Cyan);
-            }
+            
+            ChatHelper.BroadcastChatMessage(
+                NetworkText.FromKey("Mods.QuickSettle.LiquidsSettling"),
+                Color.Cyan);
             return;
         }
 

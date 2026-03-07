@@ -1,4 +1,11 @@
-QuickSettle is a server-side Terraria mod that settles all flowing liquids instantly.
+QuickSettle instantly settles all flowing liquids in your world, letting them rush to their final positions at once — eliminating lag from large-scale liquid movement and speeding up your terraforming projects.
 
 Usage:
-  Type "1" in the server chat to instantly settle all flowing liquids in the world.
+  Send "1" in the in-game chat to instantly settle all flowing liquids in the world.
+
+---
+
+QuickSettle 可以立即结算世界中所有流动的液体，让所有流动中的液体快速流动到最终位置，消除大规模液体流动带来的卡顿，并加速你的地形改造工程。
+
+使用方法：
+  在游戏内聊天框中发送 "1"，即可立即结算世界中所有流动的液体。

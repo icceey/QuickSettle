@@ -1,41 +1,36 @@
 # QuickSettle
 
-A [tModLoader](https://github.com/tModLoader/tModLoader) mod for Terraria that instantly settles all flowing liquids when a player sends `1` in the server chat.
+**[中文](README_zh.md)** | English
 
-## Features
+A [tModLoader](https://github.com/tModLoader/tModLoader) mod for Terraria. When a player sends `1` in the in-game chat, it instantly settles all flowing liquids in the world, letting them rush to their final positions at once — eliminating lag from large-scale liquid movement and speeding up your terraforming projects.
 
-- Type `1` in the server chat to instantly settle all flowing liquids in the world.
-- A confirmation message is broadcast to all players when liquids are settled.
+## Why This Mod?
 
-## Requirements
+In Terraria, digging blocks that expose large bodies of liquid can trigger extensive liquid flow that takes a very long time to settle — especially lava and honey, which flow extremely slowly. This forces players to wait and causes server-side lag. The problem is even more noticeable in multiplayer and large modded servers.
 
-- Terraria 1.4.4
-- tModLoader v2026.01+
+You can work around this by restarting the server or running the `settle` command from the server console — but I didn't want my friends to keep quitting and rejoining (terrible experience). So I made this mod. It invokes Terraria's built-in `settle` command to instantly resolve all flowing liquids and let them reach their final positions. All it takes is typing `1` in chat — no one has to leave the game.
 
-## Building Locally
+## Installation
 
-1. Install [tModLoader](https://store.steampowered.com/app/1281930/tModLoader/) via Steam.
-2. Clone this repository into your tModLoader `ModSources` directory:
+### Method 1: Steam Workshop (Recommended)
+
+1. Subscribe to this [Mod](https://steamcommunity.com/sharedfiles/filedetails/?id=3679881040) on the [Steam Workshop](https://steamcommunity.com/app/1281930/workshop/) (or search **QuickSettle** manually).
+2. Launch tModLoader, go to **Mods**, find **QuickSettle**, and enable it.
+3. Reload mods. Done!
+
+### Method 2: Manual Installation
+
+1. Download the latest `QuickSettle.tmod` from the [Releases](../../releases) page.
+2. Copy it to your tModLoader `Mods` folder:
    ```
-   ~/.local/share/Terraria/tModLoader/ModSources/QuickSettle   # Linux
-   %USERPROFILE%\Documents\My Games\Terraria\tModLoader\ModSources\QuickSettle  # Windows
+   ~/.local/share/Terraria/tModLoader/Mods/          # Linux
+   %USERPROFILE%\Documents\My Games\Terraria\tModLoader\Mods\  # Windows
+   ~/Library/Application Support/Terraria/tModLoader/Mods/  # macOS
    ```
-3. Build with:
-   ```sh
-   dotnet build QuickSettle.csproj
-   ```
-   The `.tmod` file will be placed in your tModLoader `Mods` folder automatically.
+3. Launch tModLoader, go to **Mods**, enable **QuickSettle**, and reload mods.
 
-## CI / Workflows
+## Usage
 
-| Workflow | Trigger | Description |
-|----------|---------|-------------|
-| **Build** | push / PR | Compile check — verifies the mod builds without errors |
-| **Format Check** | push / PR | Ensures code matches `.editorconfig` formatting rules |
-| **Release** | `v*` tag push | Packages the mod into a `.tmod` file and creates a GitHub Release |
+> After installing the mod, remember to enable it in the mod list and reload mods.
 
-To publish a release, push a tag:
-```sh
-git tag v1.0.0
-git push origin v1.0.0
-```
+Send `1` in the in-game chat to instantly settle all flowing liquids in the world.
