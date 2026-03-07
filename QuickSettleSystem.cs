@@ -48,13 +48,13 @@ public class QuickSettleSystem : ModSystem
         {
             int maxLoop = 100000;
             int currentLoop = 0;
-            
+
             while (Liquid.numLiquid > 0 && currentLoop < maxLoop)
             {
                 Liquid.UpdateLiquid();
                 currentLoop++;
             }
-            
+
             ChatHelper.BroadcastChatMessage(
                 NetworkText.FromKey("Mods.QuickSettle.LiquidsSettling"),
                 Color.Cyan);
