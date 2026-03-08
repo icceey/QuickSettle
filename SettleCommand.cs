@@ -4,7 +4,8 @@ using Terraria.ModLoader;
 namespace QuickSettle;
 
 /// <summary>
-/// Registers the /settle chat command which instantly settles all flowing liquids.
+/// Registers the /settle world command, which runs the same settle routine as the chat
+/// trigger without depending on the config toggle.
 /// </summary>
 public class SettleCommand : ModCommand
 {

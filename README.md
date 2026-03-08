@@ -33,4 +33,7 @@ You can work around this by restarting the server or running the `settle` comman
 
 > After installing the mod, remember to enable it in the mod list and reload mods.
 
-Send `1` in the in-game chat to instantly settle all flowing liquids in the world.
+Use one of the following triggers:
+
+- Send the exact message `1` in in-game chat. This is enabled by default and can be turned off in the server config by disabling the send-`1` shortcut.
+- Run `/settle` to trigger the same settle routine even when the send-`1` shortcut is disabled.

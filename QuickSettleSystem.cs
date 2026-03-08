@@ -10,8 +10,9 @@ using Terraria.ModLoader;
 namespace QuickSettle;
 
 /// <summary>
-/// Intercepts server chat messages and runs the liquid-settle command
-/// when any player sends "1".
+/// Hooks incoming server chat so the exact message "1" can trigger the settle routine
+/// when the server-side config allows it. The trigger message is consumed instead of
+/// continuing through normal chat processing.
 /// </summary>
 public class QuickSettleSystem : ModSystem
 {
@@ -55,11 +56,12 @@ public class QuickSettleSystem : ModSystem
     }
 
     /// <summary>
-    /// Settles all flowing liquids and broadcasts a chat notification.
+    /// Runs Terraria's liquid update loop until no flowing liquids remain or a safety
+    /// cap is reached, then broadcasts a completion message to players.
     /// </summary>
     public static void DoSettle()
     {
-        int maxLoop = 100000;
+        const int maxLoop = 100000;
         int currentLoop = 0;
 
         while (Liquid.numLiquid > 0 && currentLoop < maxLoop)
@@ -69,7 +71,7 @@ public class QuickSettleSystem : ModSystem
         }
 
         ChatHelper.BroadcastChatMessage(
-            NetworkText.FromKey("Mods.QuickSettle.LiquidsSettling"),
+            NetworkText.FromKey("Mods.QuickSettle.LiquidsSettled"),
             Color.Cyan);
     }
 }

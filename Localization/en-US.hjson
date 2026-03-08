@@ -1,17 +1,17 @@
 Mods: {
 	QuickSettle: {
-		LiquidsSettling: Liquids are now settling...
+		LiquidsSettled: Flowing liquids have been settled.
 		Commands: {
 			Settle: {
-				Description: Instantly settle all flowing liquids in the world.
+				Description: Immediately settle all flowing liquids in the world.
 			}
 		}
 		Configs: {
 			QuickSettleConfig: {
 				DisplayName: QuickSettle Config
 				EnableTriggerByChat: {
-					Label: Enable Chat Trigger
-					Tooltip: When enabled, any player can trigger liquid settling by sending "1" in chat.
+					Label: Send "1" Shortcut
+					Tooltip: "When enabled, any player can settle liquids by sending exactly \"1\" in chat. Disabling this only turns off the send-\"1\" shortcut; /settle still works."
 				}
 			}
 		}

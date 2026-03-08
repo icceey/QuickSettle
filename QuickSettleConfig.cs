@@ -11,7 +11,8 @@ public class QuickSettleConfig : ModConfig
     public override ConfigScope Mode => ConfigScope.ServerSide;
 
     /// <summary>
-    /// When enabled, any player can trigger liquid settling by sending "1" in chat.
+    /// Enabled by default. When turned on, any player can settle liquids by sending the
+    /// exact message "1" in chat. Disabling this does not affect the /settle command.
     /// </summary>
     [DefaultValue(true)]
     public bool EnableTriggerByChat { get; set; }
