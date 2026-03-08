@@ -1,5 +1,10 @@
 Mods: {
 	QuickSettle: {
 		LiquidsSettling: 液体正在稳定中...
+		Commands: {
+			Settle: {
+				Description: 立即稳定世界中所有流动的液体。
+			}
+		}
 	}
 }

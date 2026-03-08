@@ -1,5 +1,10 @@
 Mods: {
 	QuickSettle: {
 		LiquidsSettling: Liquids are now settling...
+		Commands: {
+			Settle: {
+				Description: Instantly settle all flowing liquids in the world.
+			}
+		}
 	}
 }

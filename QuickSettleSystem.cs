@@ -46,21 +46,29 @@ public class QuickSettleSystem : ModSystem
     {
         if (message.Text == "1")
         {
-            int maxLoop = 100000;
-            int currentLoop = 0;
-
-            while (Liquid.numLiquid > 0 && currentLoop < maxLoop)
-            {
-                Liquid.UpdateLiquid();
-                currentLoop++;
-            }
-
-            ChatHelper.BroadcastChatMessage(
-                NetworkText.FromKey("Mods.QuickSettle.LiquidsSettling"),
-                Color.Cyan);
+            DoSettle();
             return;
         }
 
         orig(self, message, clientId);
+    }
+
+    /// <summary>
+    /// Settles all flowing liquids and broadcasts a chat notification.
+    /// </summary>
+    public static void DoSettle()
+    {
+        int maxLoop = 100000;
+        int currentLoop = 0;
+
+        while (Liquid.numLiquid > 0 && currentLoop < maxLoop)
+        {
+            Liquid.UpdateLiquid();
+            currentLoop++;
+        }
+
+        ChatHelper.BroadcastChatMessage(
+            NetworkText.FromKey("Mods.QuickSettle.LiquidsSettling"),
+            Color.Cyan);
     }
 }
