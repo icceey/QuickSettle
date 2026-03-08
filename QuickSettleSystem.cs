@@ -22,35 +22,36 @@ public class QuickSettleSystem : ModSystem
         int clientId);
 
     private Hook? _processMessageHook;
+    private QuickSettleConfig? _config;
 
     public override void Load()
     {
+        _config = ModContent.GetInstance<QuickSettleConfig>();
+
         var method = typeof(ChatCommandProcessor).GetMethod(
             "ProcessIncomingMessage",
             BindingFlags.Public | BindingFlags.Instance)!;
 
-        _processMessageHook = new Hook(method, (ProcessMessageDelegate)OnProcessIncomingMessage);
+        _processMessageHook = new Hook(
+            method,
+            (ProcessMessageDelegate)(
+                (orig, self, message, clientId) =>
+                {
+                    if (_config.EnableTriggerByChat && message.Text == "1")
+                    {
+                        DoSettle();
+                        return;
+                    }
+
+                    orig(self, message, clientId);
+                }));
     }
 
     public override void Unload()
     {
         _processMessageHook?.Dispose();
         _processMessageHook = null;
-    }
-
-    private static void OnProcessIncomingMessage(
-        Action<ChatCommandProcessor, ChatMessage, int> orig,
-        ChatCommandProcessor self,
-        ChatMessage message,
-        int clientId)
-    {
-        if (message.Text == "1")
-        {
-            DoSettle();
-            return;
-        }
-
-        orig(self, message, clientId);
+        _config = null;
     }
 
     /// <summary>

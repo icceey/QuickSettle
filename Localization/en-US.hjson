@@ -6,5 +6,14 @@ Mods: {
 				Description: Instantly settle all flowing liquids in the world.
 			}
 		}
+		Configs: {
+			QuickSettleConfig: {
+				DisplayName: QuickSettle Config
+				EnableTriggerByChat: {
+					Label: Enable Chat Trigger
+					Tooltip: When enabled, any player can trigger liquid settling by sending "1" in chat.
+				}
+			}
+		}
 	}
 }
