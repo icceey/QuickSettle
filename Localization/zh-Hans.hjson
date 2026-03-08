@@ -1,5 +1,19 @@
 Mods: {
 	QuickSettle: {
 		LiquidsSettling: 液体正在稳定中...
+		Commands: {
+			Settle: {
+				Description: 立即稳定世界中所有流动的液体。
+			}
+		}
+		Configs: {
+			QuickSettleConfig: {
+				DisplayName: QuickSettle 配置
+				EnableTriggerByChat: {
+					Label: 启用聊天触发
+					Tooltip: 启用后，任何玩家可以通过在聊天中发送"1"来触发液体稳定。
+				}
+			}
+		}
 	}
 }
