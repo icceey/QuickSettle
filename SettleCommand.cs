@@ -15,7 +15,7 @@ public class SettleCommand : ModCommand
     public override string Description =>
         Language.GetTextValue("Mods.QuickSettle.Commands.Settle.Description");
 
-    public override void Action(CommandCaller caller)
+    public override void Action(CommandCaller caller, string input, string[] args)
     {
         QuickSettleSystem.DoSettle();
     }
