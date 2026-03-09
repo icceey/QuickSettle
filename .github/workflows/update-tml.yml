@@ -1,0 +1,90 @@
+name: Update tModLoader Version
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    name: Check and Update tModLoader Version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get latest stable tModLoader version
+        id: tml
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          LATEST=$(gh api repos/tModLoader/tModLoader/releases/latest --jq '.tag_name')
+          echo "latest=${LATEST}" >> "$GITHUB_OUTPUT"
+          echo "Latest stable tModLoader: ${LATEST}"
+
+      - name: Get current tModLoader version
+        id: current
+        run: |
+          CURRENT=$(grep -oP 'TMLVERSION:\s*\K\S+' .github/workflows/build.yml)
+          echo "version=${CURRENT}" >> "$GITHUB_OUTPUT"
+          echo "Current tModLoader: ${CURRENT}"
+
+      - name: Check if update is needed
+        id: check
+        run: |
+          if [ "${{ steps.tml.outputs.latest }}" = "${{ steps.current.outputs.version }}" ]; then
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+            echo "Already up to date."
+          else
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+            echo "Update needed: ${{ steps.current.outputs.version }} -> ${{ steps.tml.outputs.latest }}"
+          fi
+
+      - name: Check if PR already exists
+        if: steps.check.outputs.needed == 'true'
+        id: pr_check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          COUNT=$(gh pr list --repo ${{ github.repository }} \
+            --head "tml-update/${{ steps.tml.outputs.latest }}" \
+            --json number --jq length)
+          echo "exists=$([ "$COUNT" -gt 0 ] && echo 'true' || echo 'false')" >> "$GITHUB_OUTPUT"
+
+      - name: Create branch and PR
+        if: steps.check.outputs.needed == 'true' && steps.pr_check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NEW="${{ steps.tml.outputs.latest }}"
+          BRANCH="tml-update/${NEW}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git checkout -b "${BRANCH}"
+
+          sed -i "s/^\(\s*\)TMLVERSION:\s*.*/\1TMLVERSION: ${NEW}/" \
+            .github/workflows/build.yml \
+            .github/workflows/release.yml \
+            .github/workflows/format.yml
+
+          git add .github/workflows/build.yml \
+                  .github/workflows/release.yml \
+                  .github/workflows/format.yml
+          git commit -m "chore: update tModLoader to ${NEW}"
+          git push origin "${BRANCH}"
+
+          gh pr create \
+            --title "chore: update tModLoader to ${NEW}" \
+            --body "tModLoader has released a new stable version: **${NEW}**
+
+This PR updates the \`TMLVERSION\` in CI workflows.
+
+Please verify the mod still builds correctly and make any necessary API compatibility changes." \
+            --base ${{ github.event.repository.default_branch }} \
+            --head "${BRANCH}"
