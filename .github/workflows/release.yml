@@ -26,7 +26,7 @@ jobs:
 
       - name: Cache tModLoader
         id: cache-tml
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: /tmp/tModLoader
           key: tmodloader-${{ env.TMLVERSION }}
