@@ -1,9 +1,11 @@
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using Microsoft.Xna.Framework;
 using MonoMod.RuntimeDetour;
 using Terraria;
 using Terraria.Chat;
+using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
@@ -24,6 +26,12 @@ public class QuickSettleSystem : ModSystem
 
     private Hook? _processMessageHook;
     private QuickSettleConfig? _config;
+
+    private bool _isSettling;
+    private int _totalLoops;
+    private readonly Stopwatch _frameStopwatch = new Stopwatch();
+    private readonly Stopwatch _settleStopwatch = new Stopwatch();
+    private const int MaxTotalLoops = 100000;
 
     public override void Load()
     {
@@ -56,22 +64,58 @@ public class QuickSettleSystem : ModSystem
     }
 
     /// <summary>
-    /// Runs Terraria's liquid update loop until no flowing liquids remain or a safety
-    /// cap is reached, then broadcasts a completion message to players.
+    /// Initiates the liquid settle routine. If already settling, this is a no-op.
     /// </summary>
-    public static void DoSettle()
+    public void DoSettle()
     {
-        const int maxLoop = 100000;
-        int currentLoop = 0;
+        if (_isSettling)
+            return;
 
-        while (Liquid.numLiquid > 0 && currentLoop < maxLoop)
+        _isSettling = true;
+        _totalLoops = 0;
+    }
+
+    public override void PreUpdateEntities()
+    {
+        if (_isSettling)
+            _frameStopwatch.Restart();
+    }
+
+    public override void PostUpdateEverything()
+    {
+        if (Main.netMode == NetmodeID.MultiplayerClient)
+            return;
+
+        if (!_isSettling)
+            return;
+
+        if (Liquid.numLiquid <= 0 || _totalLoops >= MaxTotalLoops)
         {
-            Liquid.UpdateLiquid();
-            currentLoop++;
+            _isSettling = false;
+            ChatHelper.BroadcastChatMessage(
+                NetworkText.FromKey("Mods.QuickSettle.LiquidsSettled"),
+                Color.Cyan);
+            return;
         }
 
-        ChatHelper.BroadcastChatMessage(
-            NetworkText.FromKey("Mods.QuickSettle.LiquidsSettled"),
-            Color.Cyan);
+        long remainingTimeMs = 16 - _frameStopwatch.ElapsedMilliseconds;
+        long safeBudgetMs = Math.Max(1L, remainingTimeMs);
+
+        _settleStopwatch.Restart();
+        while (Liquid.numLiquid > 0 && _totalLoops < MaxTotalLoops && _settleStopwatch.ElapsedMilliseconds < safeBudgetMs)
+        {
+            Liquid.UpdateLiquid();
+            _totalLoops++;
+        }
+
+        _settleStopwatch.Stop();
+    }
+
+    public override void ClearWorld()
+    {
+        _isSettling = false;
+        _totalLoops = 0;
+        _frameStopwatch.Reset();
+        _settleStopwatch.Reset();
     }
 }
