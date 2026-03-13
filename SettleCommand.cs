@@ -18,6 +18,6 @@ public class SettleCommand : ModCommand
 
     public override void Action(CommandCaller caller, string input, string[] args)
     {
-        QuickSettleSystem.DoSettle();
+        ModContent.GetInstance<QuickSettleSystem>().DoSettle();
     }
 }
