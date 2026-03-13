@@ -18,7 +18,8 @@ namespace QuickSettle;
 /// </summary>
 public class QuickSettleSystem : ModSystem
 {
-    private const int MaxLoops = 100000;
+    private const double FrameTimeBudgetMs = 16;
+    private const int MaxTotalIterations = 100000;
 
     private delegate void ProcessMessageDelegate(
         Action<ChatCommandProcessor, ChatMessage, int> orig,
@@ -98,19 +99,19 @@ public class QuickSettleSystem : ModSystem
 
     public override void PostUpdateEverything()
     {
-        if (!_isSettling || Main.netMode == NetmodeID.MultiplayerClient)
+        if (Main.netMode == NetmodeID.MultiplayerClient || !_isSettling)
         {
             return;
         }
 
-        if (Liquid.numLiquid == 0 || _totalLoops >= MaxLoops)
+        if (Liquid.numLiquid == 0 || _totalLoops >= MaxTotalIterations)
         {
             FinishSettling();
             return;
         }
 
         TimeSpan remainingFrameBudget =
-            TimeSpan.FromMilliseconds(16) - _frameBudgetStopwatch.Elapsed;
+            TimeSpan.FromMilliseconds(FrameTimeBudgetMs) - _frameBudgetStopwatch.Elapsed;
 
         if (remainingFrameBudget <= TimeSpan.Zero)
         {
@@ -120,14 +121,14 @@ public class QuickSettleSystem : ModSystem
         Stopwatch sliceStopwatch = Stopwatch.StartNew();
 
         while (Liquid.numLiquid > 0
-               && _totalLoops < MaxLoops
+               && _totalLoops < MaxTotalIterations
                && sliceStopwatch.Elapsed <= remainingFrameBudget)
         {
             Liquid.UpdateLiquid();
             _totalLoops++;
         }
 
-        if (Liquid.numLiquid == 0 || _totalLoops >= MaxLoops)
+        if (Liquid.numLiquid == 0 || _totalLoops >= MaxTotalIterations)
         {
             FinishSettling();
         }
