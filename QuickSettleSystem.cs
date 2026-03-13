@@ -18,6 +18,7 @@ namespace QuickSettle;
 /// </summary>
 public class QuickSettleSystem : ModSystem
 {
+    private const int TargetFrameTimeMs = 16;
     private const int MaxTotalLoops = 100000;
 
     private delegate void ProcessMessageDelegate(
@@ -102,7 +103,7 @@ public class QuickSettleSystem : ModSystem
             return;
         }
 
-        long remainingTimeMs = 16 - _frameStopwatch.ElapsedMilliseconds;
+        long remainingTimeMs = TargetFrameTimeMs - _frameStopwatch.ElapsedMilliseconds;
         long safeBudgetMs = Math.Max(1, remainingTimeMs);
 
         _settleStopwatch.Restart();
