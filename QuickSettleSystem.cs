@@ -75,6 +75,7 @@ public class QuickSettleSystem : ModSystem
 
         _isSettling = true;
         _totalLoops = 0;
+        _frameStopwatch.Restart();
     }
 
     public override void PreUpdateEntities()
