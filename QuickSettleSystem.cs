@@ -1,9 +1,11 @@
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using Microsoft.Xna.Framework;
 using MonoMod.RuntimeDetour;
 using Terraria;
 using Terraria.Chat;
+using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
@@ -16,6 +18,8 @@ namespace QuickSettle;
 /// </summary>
 public class QuickSettleSystem : ModSystem
 {
+    private const int MaxLoops = 100000;
+
     private delegate void ProcessMessageDelegate(
         Action<ChatCommandProcessor, ChatMessage, int> orig,
         ChatCommandProcessor self,
@@ -24,6 +28,9 @@ public class QuickSettleSystem : ModSystem
 
     private Hook? _processMessageHook;
     private QuickSettleConfig? _config;
+    private readonly Stopwatch _frameBudgetStopwatch = new();
+    private bool _isSettling;
+    private int _totalLoops;
 
     public override void Load()
     {
@@ -53,25 +60,91 @@ public class QuickSettleSystem : ModSystem
         _processMessageHook?.Dispose();
         _processMessageHook = null;
         _config = null;
+        ResetSettleState();
+    }
+
+    public override void OnWorldLoad()
+    {
+        ResetSettleState();
+    }
+
+    public override void OnWorldUnload()
+    {
+        ResetSettleState();
+    }
+
+    public override void PreUpdateEntities()
+    {
+        if (_isSettling)
+        {
+            _frameBudgetStopwatch.Restart();
+        }
     }
 
     /// <summary>
-    /// Runs Terraria's liquid update loop until no flowing liquids remain or a safety
-    /// cap is reached, then broadcasts a completion message to players.
+    /// Marks the world to continue liquid settling during update hooks without blocking
+    /// the main thread with a single synchronous loop.
     /// </summary>
-    public static void DoSettle()
+    public void DoSettle()
     {
-        const int maxLoop = 100000;
-        int currentLoop = 0;
-
-        while (Liquid.numLiquid > 0 && currentLoop < maxLoop)
+        if (_isSettling)
         {
-            Liquid.UpdateLiquid();
-            currentLoop++;
+            return;
         }
 
+        _isSettling = true;
+        _totalLoops = 0;
+    }
+
+    public override void PostUpdateEverything()
+    {
+        if (!_isSettling || Main.netMode == NetmodeID.MultiplayerClient)
+        {
+            return;
+        }
+
+        if (Liquid.numLiquid == 0 || _totalLoops >= MaxLoops)
+        {
+            FinishSettling();
+            return;
+        }
+
+        TimeSpan remainingFrameBudget =
+            TimeSpan.FromMilliseconds(16) - _frameBudgetStopwatch.Elapsed;
+
+        if (remainingFrameBudget <= TimeSpan.Zero)
+        {
+            return;
+        }
+
+        Stopwatch sliceStopwatch = Stopwatch.StartNew();
+
+        while (Liquid.numLiquid > 0
+               && _totalLoops < MaxLoops
+               && sliceStopwatch.Elapsed <= remainingFrameBudget)
+        {
+            Liquid.UpdateLiquid();
+            _totalLoops++;
+        }
+
+        if (Liquid.numLiquid == 0 || _totalLoops >= MaxLoops)
+        {
+            FinishSettling();
+        }
+    }
+
+    private void FinishSettling()
+    {
+        ResetSettleState();
         ChatHelper.BroadcastChatMessage(
             NetworkText.FromKey("Mods.QuickSettle.LiquidsSettled"),
             Color.Cyan);
+    }
+
+    private void ResetSettleState()
+    {
+        _isSettling = false;
+        _totalLoops = 0;
+        _frameBudgetStopwatch.Reset();
     }
 }

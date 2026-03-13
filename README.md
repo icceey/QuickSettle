@@ -2,13 +2,13 @@
 
 **[中文](README_zh.md)** | English
 
-A [tModLoader](https://github.com/tModLoader/tModLoader) mod for Terraria. When a player sends `1` in the in-game chat, it instantly settles all flowing liquids in the world, letting them rush to their final positions at once — eliminating lag from large-scale liquid movement and speeding up your terraforming projects.
+A [tModLoader](https://github.com/tModLoader/tModLoader) mod for Terraria. When a player sends `1` in the in-game chat, it starts a background, frame-sliced settle routine for all flowing liquids in the world so the server can keep updating without a long main-thread stall, while still speeding up your terraforming projects.
 
 ## Why This Mod?
 
 In Terraria, digging blocks that expose large bodies of liquid can trigger extensive liquid flow that takes a very long time to settle — especially lava and honey, which flow extremely slowly. This forces players to wait and causes server-side lag. The problem is even more noticeable in multiplayer and large modded servers.
 
-You can work around this by restarting the server or running the `settle` command from the server console — but I didn't want my friends to keep quitting and rejoining (terrible experience). So I made this mod. It invokes Terraria's built-in `settle` command to instantly resolve all flowing liquids and let them reach their final positions. All it takes is typing `1` in chat — no one has to leave the game.
+You can work around this by restarting the server or running the `settle` command from the server console — but I didn't want my friends to keep quitting and rejoining (terrible experience). So I made this mod. It repeatedly invokes Terraria's liquid update routine in small time slices across frames, helping liquids settle without blocking the entire tick loop. All it takes is typing `1` in chat — no one has to leave the game.
 
 ## Installation
 
