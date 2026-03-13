@@ -1,6 +1,7 @@
 Mods: {
 	QuickSettle: {
 		LiquidsSettled: Flowing liquids have been settled.
+		LiquidsSettleAborted: Liquid settling stopped after reaching the safety limit with {0} liquid updates still pending.
 		Commands: {
 			Settle: {
 				Description: Immediately settle all flowing liquids in the world.

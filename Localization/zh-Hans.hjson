@@ -1,6 +1,7 @@
 Mods: {
 	QuickSettle: {
 		LiquidsSettled: 已结算所有流动中的液体。
+		LiquidsSettleAborted: 触发安全熔断后已停止液体结算，当前仍有 {0} 个液体更新待处理。
 		Commands: {
 			Settle: {
 				Description: 立即结算世界中所有流动中的液体。

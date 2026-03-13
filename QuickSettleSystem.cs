@@ -20,6 +20,7 @@ public class QuickSettleSystem : ModSystem
 {
     private const double FrameTimeBudgetMs = 16;
     private const int MaxTotalIterations = 100000;
+    private static readonly TimeSpan FrameTimeBudget = TimeSpan.FromMilliseconds(FrameTimeBudgetMs);
 
     private delegate void ProcessMessageDelegate(
         Action<ChatCommandProcessor, ChatMessage, int> orig,
@@ -104,33 +105,44 @@ public class QuickSettleSystem : ModSystem
             return;
         }
 
-        if (Liquid.numLiquid == 0 || _totalLoops >= MaxTotalIterations)
+        if (Liquid.numLiquid == 0)
         {
             FinishSettling();
             return;
         }
 
-        TimeSpan remainingFrameBudget =
-            TimeSpan.FromMilliseconds(FrameTimeBudgetMs) - _frameBudgetStopwatch.Elapsed;
-
-        if (remainingFrameBudget <= TimeSpan.Zero)
+        if (_totalLoops >= MaxTotalIterations)
         {
+            AbortSettling();
             return;
         }
 
-        Stopwatch sliceStopwatch = Stopwatch.StartNew();
+        TimeSpan remainingFrameBudget =
+            FrameTimeBudget - _frameBudgetStopwatch.Elapsed;
+
+        if (remainingFrameBudget <= TimeSpan.Zero)
+        {
+            RunSingleFallbackUpdate();
+            return;
+        }
+
+        long sliceStartTimestamp = Stopwatch.GetTimestamp();
 
         while (Liquid.numLiquid > 0
                && _totalLoops < MaxTotalIterations
-               && sliceStopwatch.Elapsed <= remainingFrameBudget)
+               && Stopwatch.GetElapsedTime(sliceStartTimestamp) <= remainingFrameBudget)
         {
             Liquid.UpdateLiquid();
             _totalLoops++;
         }
 
-        if (Liquid.numLiquid == 0 || _totalLoops >= MaxTotalIterations)
+        if (Liquid.numLiquid == 0)
         {
             FinishSettling();
+        }
+        else if (_totalLoops >= MaxTotalIterations)
+        {
+            AbortSettling();
         }
     }
 
@@ -140,6 +152,30 @@ public class QuickSettleSystem : ModSystem
         ChatHelper.BroadcastChatMessage(
             NetworkText.FromKey("Mods.QuickSettle.LiquidsSettled"),
             Color.Cyan);
+    }
+
+    private void AbortSettling()
+    {
+        int remainingLiquid = Liquid.numLiquid;
+        ResetSettleState();
+        ChatHelper.BroadcastChatMessage(
+            NetworkText.FromKey("Mods.QuickSettle.LiquidsSettleAborted", remainingLiquid),
+            Color.Orange);
+    }
+
+    private void RunSingleFallbackUpdate()
+    {
+        Liquid.UpdateLiquid();
+        _totalLoops++;
+
+        if (Liquid.numLiquid == 0)
+        {
+            FinishSettling();
+        }
+        else if (_totalLoops >= MaxTotalIterations)
+        {
+            AbortSettling();
+        }
     }
 
     private void ResetSettleState()
