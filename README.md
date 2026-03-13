@@ -8,7 +8,7 @@ A [tModLoader](https://github.com/tModLoader/tModLoader) mod for Terraria. When 
 
 In Terraria, digging blocks that expose large bodies of liquid can trigger extensive liquid flow that takes a very long time to settle — especially lava and honey, which flow extremely slowly. This forces players to wait and causes server-side lag. The problem is even more noticeable in multiplayer and large modded servers.
 
-You can work around this by restarting the server or running the `settle` command from the server console — but I didn't want my friends to keep quitting and rejoining (terrible experience). So I made this mod. It invokes Terraria's built-in `settle` command to instantly resolve all flowing liquids and let them reach their final positions. All it takes is typing `1` in chat — no one has to leave the game.
+You can work around this by restarting the server or running the `settle` command from the server console — but I didn't want my friends to keep quitting and rejoining (terrible experience). So I made this mod. All it takes is typing `1` in chat — no one has to leave the game.
 
 ## Installation
 

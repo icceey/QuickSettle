@@ -32,6 +32,7 @@ public class QuickSettleSystem : ModSystem
     private readonly Stopwatch _frameStopwatch = new Stopwatch();
     private readonly Stopwatch _settleStopwatch = new Stopwatch();
     private const int MaxTotalLoops = 100000;
+    private const long TargetFrameMs = 16;
 
     public override void Load()
     {
@@ -69,10 +70,18 @@ public class QuickSettleSystem : ModSystem
     public void DoSettle()
     {
         if (_isSettling)
+        {
+            ChatHelper.BroadcastChatMessage(
+                NetworkText.FromKey("Mods.QuickSettle.LiquidsAlreadySettling"),
+                Color.Yellow);
             return;
+        }
 
         _isSettling = true;
         _totalLoops = 0;
+        ChatHelper.BroadcastChatMessage(
+            NetworkText.FromKey("Mods.QuickSettle.LiquidsSettling"),
+            Color.Cyan);
     }
 
     public override void PreUpdateEntities()
@@ -98,7 +107,7 @@ public class QuickSettleSystem : ModSystem
             return;
         }
 
-        long remainingTimeMs = 16 - _frameStopwatch.ElapsedMilliseconds;
+        long remainingTimeMs = TargetFrameMs - _frameStopwatch.ElapsedMilliseconds;
         long safeBudgetMs = Math.Max(1L, remainingTimeMs);
 
         _settleStopwatch.Restart();

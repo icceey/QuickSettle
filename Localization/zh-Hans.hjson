@@ -1,6 +1,8 @@
 Mods: {
 	QuickSettle: {
+		LiquidsSettling: 正在加速结算流动中的液体...
 		LiquidsSettled: 已结算所有流动中的液体。
+		LiquidsAlreadySettling: 液体正在结算中，请稍候...
 		Commands: {
 			Settle: {
 				Description: 立即结算世界中所有流动中的液体。
