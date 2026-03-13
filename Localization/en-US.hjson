@@ -3,6 +3,7 @@ Mods: {
 		LiquidsSettling: Accelerating liquid settlement...
 		LiquidsSettled: Flowing liquids have been settled.
 		LiquidsAlreadySettling: Liquids are already being settled, please wait...
+		LiquidsSettleInterrupted: Settled a large amount of liquids! To ensure smooth gameplay, this task has been paused. Please trigger again if you want to continue.
 		Commands: {
 			Settle: {
 				Description: Immediately settle all flowing liquids in the world.

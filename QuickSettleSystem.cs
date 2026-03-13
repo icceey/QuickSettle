@@ -101,9 +101,18 @@ public class QuickSettleSystem : ModSystem
         if (Liquid.numLiquid <= 0 || _totalLoops >= MaxTotalLoops)
         {
             _isSettling = false;
-            ChatHelper.BroadcastChatMessage(
-                NetworkText.FromKey("Mods.QuickSettle.LiquidsSettled"),
-                Color.Cyan);
+            if (Liquid.numLiquid <= 0)
+            {
+                ChatHelper.BroadcastChatMessage(
+                    NetworkText.FromKey("Mods.QuickSettle.LiquidsSettled"),
+                    Color.Cyan);
+            }
+            else
+            {
+                ChatHelper.BroadcastChatMessage(
+                    NetworkText.FromKey("Mods.QuickSettle.LiquidsSettleInterrupted"),
+                    Color.Yellow);
+            }
             return;
         }
 

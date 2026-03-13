@@ -3,6 +3,7 @@ Mods: {
 		LiquidsSettling: 正在加速结算流动中的液体...
 		LiquidsSettled: 已结算所有流动中的液体。
 		LiquidsAlreadySettling: 液体正在结算中，请稍候...
+		LiquidsSettleInterrupted: 已加速结算海量液体！为确保游戏流畅，本次任务已暂停。如需继续，请再次触发。
 		Commands: {
 			Settle: {
 				Description: 立即结算世界中所有流动中的液体。
