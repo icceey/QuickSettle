@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
@@ -18,6 +19,11 @@ public class SettleCommand : ModCommand
 
     public override void Action(CommandCaller caller, string input, string[] args)
     {
-        ModContent.GetInstance<QuickSettleSystem>().DoSettle();
+        if (!ModContent.GetInstance<QuickSettleSystem>().DoSettle())
+        {
+            caller.Reply(
+                Language.GetTextValue("Mods.QuickSettle.LiquidsAlreadySettling"),
+                Color.Yellow);
+        }
     }
 }

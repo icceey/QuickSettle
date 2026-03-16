@@ -49,7 +49,13 @@ public class QuickSettleSystem : ModSystem
                 {
                     if (_config.EnableTriggerByChat && message.Text == "1")
                     {
-                        DoSettle();
+                        if (!DoSettle())
+                        {
+                            ChatHelper.SendChatMessageToClient(
+                                NetworkText.FromKey("Mods.QuickSettle.LiquidsAlreadySettling"),
+                                Color.Yellow,
+                                clientId);
+                        }
                         return;
                     }
 
@@ -65,23 +71,20 @@ public class QuickSettleSystem : ModSystem
     }
 
     /// <summary>
-    /// Initiates the liquid settle routine. If already settling, this is a no-op.
+    /// Initiates the liquid settle routine.
     /// </summary>
-    public void DoSettle()
+    /// <returns><see langword="true"/> if settling was started; <see langword="false"/> if already in progress.</returns>
+    public bool DoSettle()
     {
         if (_isSettling)
-        {
-            ChatHelper.BroadcastChatMessage(
-                NetworkText.FromKey("Mods.QuickSettle.LiquidsAlreadySettling"),
-                Color.Yellow);
-            return;
-        }
+            return false;
 
         _isSettling = true;
         _totalLoops = 0;
         ChatHelper.BroadcastChatMessage(
             NetworkText.FromKey("Mods.QuickSettle.LiquidsSettling"),
             Color.Cyan);
+        return true;
     }
 
     public override void PreUpdateEntities()
