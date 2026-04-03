@@ -6,7 +6,7 @@ on:
   pull_request:
 
 env:
-  TMLVERSION: v2026.01.3.3
+  TMLVERSION: v2026.02.3.0
 
 jobs:
   build:
