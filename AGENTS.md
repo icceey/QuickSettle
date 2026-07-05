@@ -8,7 +8,7 @@
 
 ## Build And Verify
 - Use .NET 8 and set `TMLInstallDir` to a tModLoader install containing `tMLMod.targets`; the project default is the Linux Steam path and is usually wrong on macOS or CI scratch dirs.
-- CI pins tModLoader `v2026.03.3.0`. To mirror CI without a local install: `curl -sL https://github.com/tModLoader/tModLoader/releases/download/v2026.03.3.0/tModLoader.zip -o /tmp/tModLoader.zip && mkdir -p /tmp/tModLoader && unzip -q /tmp/tModLoader.zip -d /tmp/tModLoader`.
+- CI pins tModLoader via `TMLVERSION` in the GitHub workflow files. To mirror CI without a local install: `TMLVERSION=$(awk '/TMLVERSION:/ {print $2; exit}' .github/workflows/build.yml) && curl -sL "https://github.com/tModLoader/tModLoader/releases/download/${TMLVERSION}/tModLoader.zip" -o /tmp/tModLoader.zip && mkdir -p /tmp/tModLoader && unzip -q /tmp/tModLoader.zip -d /tmp/tModLoader`.
 - Standard verification order: `TMLInstallDir=/tmp/tModLoader dotnet restore QuickSettle.csproj`, then `TMLInstallDir=/tmp/tModLoader dotnet build QuickSettle.csproj --no-restore -p:BuildMod=false`, then `TMLInstallDir=/tmp/tModLoader dotnet format QuickSettle.csproj --verify-no-changes --no-restore`.
 - There is no test project; compile and format are the CI checks.
 - Packaging is separate from compile-only validation: create `/tmp/tml_save/Mods`, then run `TMLInstallDir=/tmp/tModLoader dotnet build QuickSettle.csproj --no-restore -p:ExtraBuildModFlags="-tmlsavedirectory /tmp/tml_save -nosteam"` to write `.tmod` output under the supplied tML save dir.
