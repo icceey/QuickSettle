@@ -6,7 +6,7 @@ on:
       - "v*"
 
 env:
-  TMLVERSION: v2026.06.3.0
+  TMLVERSION: v2026.06.3.4
 
 jobs:
   release:
