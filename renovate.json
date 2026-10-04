@@ -20,6 +20,10 @@
   ],
   "packageRules": [
     {
+      "matchPackageNames": ["dotnet-sdk"],
+      "allowedVersions": "8.x"
+    },
+    {
       "matchManagers": ["regex"],
       "dependencyDashboardApproval": false
     }
