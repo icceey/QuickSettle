@@ -21,7 +21,7 @@
   "packageRules": [
     {
       "matchPackageNames": ["dotnet-sdk"],
-      "allowedVersions": "8.x"
+      "enabled": false
     },
     {
       "matchManagers": ["regex"],
